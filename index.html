@@ -19,6 +19,46 @@
       data-orientation="horizontal"
       data-position="right">
 </script>
+<!-- Campo de entrada + botón -->
+<div style="margin-top: 20px;">
+  <input id="preguntaUsuario" type="text" placeholder="Haz tu pregunta..." style="width: 300px;" />
+  <button id="enviarBtn">Enviar</button>
+</div>
+
+
+<!-- Script para conectar con Make y actualizar el avatar -->
+<script>
+  async function enviarPreguntaAlWebhook(texto) {
+    try {
+      const respuesta = await fetch("https://hook.eu2.make.com/rshyne77rig48a17c91i7mxjuyhqvnm9", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ user_message: texto })
+      });
+
+      const data = await respuesta.json();
+      const videoUrl = data.video_url;
+
+      if (window.didPlayer && videoUrl) {
+        window.didPlayer.loadVideo({ url: videoUrl });
+      } else {
+        console.error("No se pudo cargar el vídeo en el avatar.");
+      }
+
+    } catch (error) {
+      console.error("Error al contactar con Make o al procesar la respuesta:", error);
+    }
+  }
+
+  document.getElementById("enviarBtn").addEventListener("click", function () {
+    const input = document.getElementById("preguntaUsuario").value;
+    if (input) {
+      enviarPreguntaAlWebhook(input);
+    }
+  });
+</script>
 </body>
 </html>
 
