@@ -9,56 +9,64 @@
   <h1>Asistente Cris de Super Cerca</h1>
   <p>Este es un ejemplo del asistente virtual con integración D-ID.</p>
 
+  <!-- Campo de entrada + botón -->
+  <div style="margin-top: 20px;">
+    <input id="preguntaUsuario" type="text" placeholder="Haz tu pregunta..." style="width: 300px;" />
+    <button id="enviarBtn">Enviar</button>
+  </div>
+
+  <!-- Avatar D-ID -->
   <script type="module"
-      src="https://agent.d-id.com/v2/index.js"
-      data-mode="fabio"
-      data-client-key="Z29vZ2xlLW9hdXRoMnwxMDQ1Mjg0ODczMDIxNzY2NjQ3NTI6WUFzcGpvaEJrQUFNMnVDUjJhTWZs"
-      data-agent-id="v2_agt_iUDiUff-"
-      data-name="did-agent"
-      data-monitor="true"
-      data-orientation="horizontal"
-      data-position="right">
-</script>
-<!-- Campo de entrada + botón -->
-<div style="margin-top: 20px;">
-  <input id="preguntaUsuario" type="text" placeholder="Haz tu pregunta..." style="width: 300px;" />
-  <button id="enviarBtn">Enviar</button>
-</div>
+    src="https://agent.d-id.com/v2/index.js"
+    data-mode="fabio"
+    data-client-key="Z29vZ2xlLW9hdXRoMnwxMDQ1Mjg0ODczMDIxNzY2NjQ3NTI6WUFzcGpvaEJrQUFNMnVDUjJhTWZs"
+    data-agent-id="v2_agt_iUDiUff-"
+    data-name="did-agent"
+    data-monitor="true"
+    data-orientation="horizontal"
+    data-position="right">
+  </script>
 
+  <!-- Script de conexión con Make -->
+  <script>
+    async function enviarPreguntaAlWebhook(texto) {
+      console.log("📤 Enviando al webhook:", texto);
+      try {
+        const respuesta = await fetch("https://hook.eu2.make.com/rshyne77rig48a17c91i7mxjuyhqvnm9", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ user_message: texto })
+        });
 
-<!-- Script para conectar con Make y actualizar el avatar -->
-<script>
-  async function enviarPreguntaAlWebhook(texto) {
-    try {
-      const respuesta = await fetch("https://hook.eu2.make.com/rshyne77rig48a17c91i7mxjuyhqvnm9", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ user_message: texto })
-      });
+        const data = await respuesta.json();
+        const videoUrl = data.video_url;
+        console.log("🎬 Vídeo recibido:", videoUrl);
 
-      const data = await respuesta.json();
-      const videoUrl = data.video_url;
+        if (window.didPlayer && videoUrl) {
+          console.log("▶️ Reproduciendo en didPlayer...");
+          window.didPlayer.loadVideo({ url: videoUrl });
+        } else {
+          console.warn("⚠️ No se pudo cargar el vídeo.");
+          console.log("window.didPlayer =", window.didPlayer);
+        }
 
-      if (window.didPlayer && videoUrl) {
-        window.didPlayer.loadVideo({ url: videoUrl });
-      } else {
-        console.error("No se pudo cargar el vídeo en el avatar.");
+      } catch (error) {
+        console.error("❌ Error en la llamada a Make o D-ID:", error);
       }
-
-    } catch (error) {
-      console.error("Error al contactar con Make o al procesar la respuesta:", error);
     }
-  }
 
-  document.getElementById("enviarBtn").addEventListener("click", function () {
-    const input = document.getElementById("preguntaUsuario").value;
-    if (input) {
-      enviarPreguntaAlWebhook(input);
-    }
-  });
-</script>
+    // Esperar a que el DOM esté listo y conectar evento al botón
+    document.addEventListener("DOMContentLoaded", function () {
+      const boton = document.getElementById("enviarBtn");
+      boton.addEventListener("click", function () {
+        const input = document.getElementById("preguntaUsuario").value;
+        if (input) {
+          enviarPreguntaAlWebhook(input);
+        }
+      });
+    });
+  </script>
 </body>
 </html>
-
