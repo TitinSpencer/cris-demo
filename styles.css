@@ -1,0 +1,46 @@
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  background-color: #f7f7f7;
+}
+
+header {
+  background-color: #72b527;
+  color: white;
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+.logo {
+  width: 120px;
+  margin-bottom: 1rem;
+}
+
+main {
+  padding: 2rem;
+  max-width: 900px;
+  margin: auto;
+  background-color: white;
+}
+
+h2 {
+  color: #4a7c12;
+}
+
+ul, ol {
+  margin-left: 1.5rem;
+}
+
+.destacado, .ventajas, .tarjetas, .como-funciona, .alta {
+  margin-bottom: 2rem;
+}
+
+footer {
+  background-color: #eeeeee;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+  color: #666;
+}
